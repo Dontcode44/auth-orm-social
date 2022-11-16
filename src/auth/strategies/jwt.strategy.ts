@@ -5,17 +5,21 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { JwtPayload } from '../dto/jwt-payload.interface';
-import { AuthService } from '../auth.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
+  /**
+   * The constructor function is used to inject the User repository into the class
+   * @param userRepo - Repository<User> - This is the repository that we will use to find the user in
+   * the database.
+   */
   constructor(
     @InjectRepository(User) private readonly userRepo: Repository<User>,
-    private readonly authService: AuthService,
   ) {
     super({
-      secretOrKey: 'super-sign',
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ignoreExpiration: false,
+      secretOrKey: 'super-sign',
     });
   }
 
