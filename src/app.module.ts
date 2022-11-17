@@ -3,10 +3,19 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { ProfilesModule } from './profiles/profiles.module';
+import { PublicationsModule } from './publications/publications.module';
+import { UsersModule } from './users/users.module';
+import { AccessControlModule } from "nest-access-control";
+import { roles } from './app.roles';
+import { MessengerModule } from './messenger/messenger.module';
+import { ChatsModule } from './chats/chats.module';
+import { FriendsModule } from './friends/friends.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
+    TypeOrmModule.forRootAsync({
+      useFactory: () => ({
       type: 'postgres',
       host: 'localhost',
       port: 5432,
@@ -16,7 +25,14 @@ import { AuthModule } from './auth/auth.module';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
+  }),
     AuthModule,
+    ProfilesModule,
+    PublicationsModule,
+    UsersModule,
+    MessengerModule,
+    ChatsModule,
+    FriendsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

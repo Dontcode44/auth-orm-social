@@ -32,12 +32,13 @@ export class AuthService {
    * @param {RegisterUserDto} registerUser - RegisterUserDto
    */
   async registerUser(registerUser: RegisterUserDto): Promise<void> {
-    const { email, password } = registerUser;
+    const { email, password, roles } = registerUser;
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
     const user = this.userRepo.create({
       email,
       password: hashedPassword,
+      roles,
       activationToken: v4(),
     });
     const foundUser = await this.userRepo.findOne({
@@ -45,7 +46,7 @@ export class AuthService {
     });
     if (foundUser) {
       throw new HttpException(
-        'User with that email already exists',
+        '',
         HttpStatus.CONFLICT,
       );
     }
@@ -54,7 +55,7 @@ export class AuthService {
     } catch (error) {
       if (error.code === '23505') {
         throw new HttpException(
-          'User with this email already exists',
+          'Operation failed',
           HttpStatus.BAD_REQUEST,
         );
       }
@@ -63,6 +64,12 @@ export class AuthService {
     this.userRepo.save(user);
   }
 
+  /**
+   * It takes a loginDto object, finds a user by email, checks if the password is correct, and if so,
+   * returns a JWT token
+   * @param {LoginUserDto} loginDto - LoginUserDto - This is the DTO that we created earlier.
+   * @returns { accessToken: string }
+   */
   async findOneByEmail(
     loginDto: LoginUserDto,
   ): Promise<{ accessToken: string }> {
@@ -84,6 +91,11 @@ export class AuthService {
     throw new UnauthorizedException('Invalid credentials');
   }
 
+  /**
+   * It takes an object with an id and a code, finds a user with that id and code, and if it finds one,
+   * it sets the user's active property to true
+   * @param {ActivateUserDto} activateUser - ActivateUserDto
+   */
   async activateUser(activateUser: ActivateUserDto): Promise<void> {
     const { id, code } = activateUser;
     const user: User = await this.userRepo.findOne({
@@ -96,4 +108,10 @@ export class AuthService {
     user.active = true;
     await this.userRepo.save(user);
   }
+
+  getHello(user: any) {
+    return this.userRepo.findOne(user.id);
+  }
+
+  
 }

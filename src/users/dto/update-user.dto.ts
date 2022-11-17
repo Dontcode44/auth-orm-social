@@ -1,7 +1,7 @@
-import { IsArray, IsEmail, IsEnum, IsNotEmpty, Length } from 'class-validator';
-import { AppRoles } from 'src/app.roles';
+import { IsArray, IsEmail, IsEnum, IsNotEmpty, Length } from "class-validator";
+import { AppRoles } from "src/app.roles";
 
-export class RegisterUserDto {
+export class UpdateUserDto {
   @IsNotEmpty()
   @IsEmail({}, { message: 'Please enter a valid email' })
   email: string;
