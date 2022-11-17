@@ -16,19 +16,20 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ApiTags } from '@nestjs/swagger';
 import { ACGuard, UseRoles } from 'nest-access-control';
 import { AppResources } from 'src/app.roles';
+import { TOKEN } from 'src/decorators/token.decorator';
 
 @ApiTags('Auth routes')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @UseGuards(ACGuard)
-  @UseRoles({
-    possession: 'any',
-    action: 'create',
-    resource: AppResources.USER,
-  })
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(ACGuard)
+  // @UseRoles({
+  //   possession: 'any',
+  //   action: 'create',
+  //   resource: AppResources.USER,
+  // })
+  //@UseGuards(JwtAuthGuard)
   @Post('register')
   register(@Body() registerUser: RegisterUserDto): Promise<void> {
     return this.authService.registerUser(registerUser);
@@ -42,5 +43,12 @@ export class AuthController {
   @Get('active_account')
   activateAccount(@Query() activateDto: ActivateUserDto): Promise<void> {
     return this.authService.activateUser(activateDto);
+  }
+
+  @Get('Test')
+  async verifyId(@TOKEN() token): Promise<string> {
+    console.log(token);
+    return 'Success';
+    
   }
 }

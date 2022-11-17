@@ -52,4 +52,16 @@ export class UsersService {
     }
     return toUpdate;
   }
+
+  async findOneById(id: string): Promise<User | undefined> {
+    const user = await this.userRepo.findOne({
+      where: {
+        id,
+      },
+    });
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+    return user;
+  }
 }
