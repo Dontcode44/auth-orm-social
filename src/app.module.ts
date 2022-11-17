@@ -9,7 +9,7 @@ import { AuthModule } from './auth/auth.module';
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
-      port: 5440,
+      port: 5432,
       username: 'post',
       password: 'facebook',
       database: 'postgres_db',
